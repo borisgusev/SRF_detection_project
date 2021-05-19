@@ -1,0 +1,42 @@
+appdirs @ file:///home/conda/feedstock_root/build_artifacts/appdirs_1603108395799/work
+brotlipy==0.7.0
+certifi==2020.12.5
+cffi @ file:///Users/runner/miniforge3/conda-bld/cffi_1613413910603/work
+chardet @ file:///Users/runner/miniforge3/conda-bld/chardet_1610093454858/work
+cloudpickle @ file:///home/conda/feedstock_root/build_artifacts/cloudpickle_1598400192773/work
+cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography_1616851494586/work
+cycler==0.10.0
+cytoolz==0.11.0
+dask @ file:///home/conda/feedstock_root/build_artifacts/dask-core_1621036232084/work
+decorator @ file:///home/conda/feedstock_root/build_artifacts/decorator_1621187651333/work
+fsspec @ file:///home/conda/feedstock_root/build_artifacts/fsspec_1621008914210/work
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1593328102638/work
+imagecodecs @ file:///Users/runner/miniforge3/conda-bld/imagecodecs_1621337573228/work
+imageio @ file:///home/conda/feedstock_root/build_artifacts/imageio_1594044661732/work
+kiwisolver @ file:///Users/runner/miniforge3/conda-bld/kiwisolver_1610099836705/work
+locket==0.2.0
+matplotlib @ file:///Users/runner/miniforge3/conda-bld/matplotlib-suite_1620506033308/work
+networkx==2.3
+numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1616933195014/work
+olefile @ file:///home/conda/feedstock_root/build_artifacts/olefile_1602866521163/work
+packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1612459636436/work
+partd @ file:///home/conda/feedstock_root/build_artifacts/partd_1617910651905/work
+pathlib==1.0.1
+Pillow @ file:///Users/runner/miniforge3/conda-bld/pillow_1621288044168/work
+pooch @ file:///home/conda/feedstock_root/build_artifacts/pooch_1606467285986/work
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1593275161868/work
+pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1608055815057/work
+pyparsing==2.4.7
+PySocks @ file:///Users/runner/miniforge3/conda-bld/pysocks_1610291460269/work
+python-dateutil==2.8.1
+PyWavelets @ file:///Users/runner/miniforge3/conda-bld/pywavelets_1607290823167/work
+PyYAML==5.4.1
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1608156231189/work
+scikit-image==0.18.1
+scipy @ file:///Users/runner/miniforge3/conda-bld/scipy_1619561960622/work
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
+tifffile @ file:///home/conda/feedstock_root/build_artifacts/tifffile_1617956128193/work
+toolz @ file:///home/conda/feedstock_root/build_artifacts/toolz_1600973991856/work
+tornado @ file:///Users/runner/miniforge3/conda-bld/tornado_1610094701146/work
+urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1615828766818/work
+yapf @ file:///home/conda/feedstock_root/build_artifacts/yapf_1618790300295/work
