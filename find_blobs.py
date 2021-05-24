@@ -6,9 +6,12 @@ from skimage import color, util, exposure, feature
 
 
 def find_candidate_srf_blobs(img):
+    # image preprocessing
     img = color.rgba2rgb(img)
     img = color.rgb2gray(img)
+    # invert image as exposure.blob_log finds light blobs, whereas SRF is dark
     img = util.invert(img)
+    # gamma exposure seems to increase sensitivity. another parameter to tinker with
     img = exposure.adjust_gamma(img, gamma=2.5)
     blobs = feature.blob_log(img,
                              min_sigma=3,
@@ -16,6 +19,7 @@ def find_candidate_srf_blobs(img):
                              num_sigma=20,
                              threshold=0.18,
                              exclude_border=(65))
+    # convert sigma vals in third to column to radii
     blobs[:, 2] = blobs[:, 2] * np.sqrt(2)
     return blobs
 
@@ -25,6 +29,7 @@ def filter_blob_candidates():
 
 
 def plot_blobs(axes, blobs):
+    # plot each blob as circle at the coordinate with respective radius
     for blob in blobs:
         y, x, r = blob
         c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
@@ -33,6 +38,7 @@ def plot_blobs(axes, blobs):
 
 
 def plot_before_after(img):
+    # utility function to plot original and blobs side by side
     fig, axes = plt.subplots(1, 2, sharex=True, sharey=True)
     ax = axes.ravel()
     ax[0].imshow(img)
@@ -46,6 +52,9 @@ def plot_before_after(img):
     return fig, axes
 
 if __name__ == '__main__':
+    # Takes a little while to run, generates folders
+    # with figures for each healthy and srf image
+
     output_path = Path('blob_output')
     output_path.mkdir(exist_ok=True)
     healthy, srf = get_file_paths.get_all_train_data()
