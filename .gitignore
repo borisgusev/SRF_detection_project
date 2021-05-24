@@ -1,4 +1,6 @@
 .DS_Store
 .python-version
-Train-Data
 .vscode
+__pycache__
+Train-Data
+blob_output
