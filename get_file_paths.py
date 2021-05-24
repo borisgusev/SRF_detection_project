@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def train_data():
     train_data_path = Path('Train-Data')
     healthy_path = train_data_path / 'NoSRF'
@@ -7,11 +8,13 @@ def train_data():
     healthy_images = [file for file in healthy_path.iterdir()]
     srf_images = [file for file in srf_path.iterdir()]
 
+
 def get_healthy_data():
     train_data_path = Path('Train-Data')
     healthy_path = train_data_path / 'NoSRF'
     healthy_images = [file for file in healthy_path.iterdir()]
     return healthy_images
+
 
 def get_srf_data():
     train_data_path = Path('Train-Data')
@@ -19,8 +22,10 @@ def get_srf_data():
     srf_images = [file for file in srf_path.iterdir()]
     return srf_images
 
+
 def get_all_train_data():
     return get_healthy_data(), get_srf_data()
+
 
 if __name__ == '__main__':
     # quick check to see if the file paths and the number of each image is correct

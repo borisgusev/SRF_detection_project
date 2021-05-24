@@ -51,6 +51,7 @@ def plot_before_after(img):
     ax[1].set_axis_off()
     return fig, axes
 
+
 if __name__ == '__main__':
     # Takes a little while to run, generates folders
     # with figures for each healthy and srf image
@@ -67,9 +68,8 @@ if __name__ == '__main__':
         fig.suptitle(img_path.name)
         plt.tight_layout()
         file_name = healthy_output_path / img_path.name
-        plt.savefig(file_name, dpi = 400, bbox_inches = 'tight')
+        plt.savefig(file_name, dpi=400, bbox_inches='tight')
         # plt.show()
-
 
     srf_output_path = output_path / 'SRF'
     srf_output_path.mkdir(exist_ok=True)
@@ -79,5 +79,5 @@ if __name__ == '__main__':
         fig.suptitle(img_path.name)
         plt.tight_layout()
         file_name = srf_output_path / img_path.name
-        plt.savefig(file_name, dpi = 400, bbox_inches = 'tight')
+        plt.savefig(file_name, dpi=400, bbox_inches='tight')
         # plt.show()
