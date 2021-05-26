@@ -1,6 +1,7 @@
 import numpy as np
+from scipy.ndimage import morphology
 # import matplotlib.pyplot as plt
-from skimage import color
+from skimage import color, restoration, exposure
 
 
 def rm_white_frame(img):
@@ -39,4 +40,8 @@ def preprocess(img):
     img = color.rgba2rgb(img)
     img = rm_white_frame(img)
     img = color.rgb2gray(img)
+
+    img = restoration.denoise_nl_means(img)
+    # img = exposure.equalize_adapthist(img)
+
     return img
