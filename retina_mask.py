@@ -8,7 +8,6 @@ import get_file_paths
 import find_blobs
 import image_edit_utils as utls
 
-healthy, srf = get_file_paths.get_all_train_data()
 
 def retinal_mask(img):
     mask = np.zeros_like(img)
@@ -17,19 +16,21 @@ def retinal_mask(img):
     mask = ndi.binary_fill_holes(mask)
     return mask
 
-# img = plt.imread(srf[4])
-for img in srf:
-    img = plt.imread(img)
-    img = image_preprocessing.preprocess(img)
+if __name__ == '__main__':
+    healthy, srf = get_file_paths.get_all_train_data()
+    # img = plt.imread(srf[4])
+    for img in srf:
+        img = plt.imread(img)
+        img = image_preprocessing.preprocess(img)
 
-    # img = morphology.opening(img)
+        # img = morphology.opening(img)
 
-    # edges = get_retinal_mask(img)
-    edges = retinal_mask(img)
+        # edges = get_retinal_mask(img)
+        edges = retinal_mask(img)
 
-    plt.subplot(1, 2, 1)
-    plt.imshow(img, cmap='gray')
-    plt.subplot(1, 2, 2)
-    plt.imshow(edges, cmap='gray')
+        plt.subplot(1, 2, 1)
+        plt.imshow(img, cmap='gray')
+        plt.subplot(1, 2, 2)
+        plt.imshow(edges, cmap='gray')
 
-    plt.show()
+        plt.show() 
