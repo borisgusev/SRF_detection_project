@@ -62,35 +62,36 @@ if __name__ == '__main__':
     # Takes a little while to run, generates folders
     # with figures for each healthy and srf image
 
-    # output_path = Path('blob_output')
-    # output_path.mkdir(exist_ok=True)
+    output_path = Path('blob_output')
+    output_path.mkdir(exist_ok=True)
     healthy, srf = get_file_paths.get_all_train_data()
 
-    img = plt.imread(srf[0])
-    img = image_preprocessing.preprocess(img)
-    fig, axes = plot_before_after(img)
-    plt.tight_layout()
-    plt.show()
-
-    # healthy_output_path = output_path / 'NoSRF'
-    # healthy_output_path.mkdir(exist_ok=True)
-    # for img_path in healthy:
-    #     img = plt.imread(img_path)
-    #     img = image_preprocessing.preprocess(img)
-    #     fig, axes = plot_before_after(img)
-    #     fig.suptitle(img_path.name)
-    #     plt.tight_layout()
-    #     # file_name = healthy_output_path / img_path.name
-    #     # plt.savefig(file_name, dpi=400, bbox_inches='tight')
-    #     plt.show()
-
-    # srf_output_path = output_path / 'SRF'
-    # srf_output_path.mkdir(exist_ok=True)
-    # for img_path in srf:
-    #     img = plt.imread(img_path)
-    #     fig, axes = plot_before_after(img)
-    #     fig.suptitle(img_path.name)
-    #     plt.tight_layout()
-    #     file_name = srf_output_path / img_path.name
-    #     plt.savefig(file_name, dpi=400, bbox_inches='tight')
+    # img = plt.imread(srf[0])
+    # img = image_preprocessing.preprocess(img)
+    # fig, axes = plot_before_after(img)
+    # plt.tight_layout()
     # plt.show()
+
+    healthy_output_path = output_path / 'NoSRF'
+    healthy_output_path.mkdir(exist_ok=True)
+    for img_path in healthy:
+        img = plt.imread(img_path)
+        img = image_preprocessing.preprocess(img)
+        fig, axes = plot_before_after(img)
+        fig.suptitle(img_path.name)
+        plt.tight_layout()
+        file_name = healthy_output_path / img_path.name
+        plt.savefig(file_name, dpi=400, bbox_inches='tight')
+        # plt.show()
+
+    srf_output_path = output_path / 'SRF'
+    srf_output_path.mkdir(exist_ok=True)
+    for img_path in srf:
+        img = plt.imread(img_path)
+        img = image_preprocessing.preprocess(img)
+        fig, axes = plot_before_after(img)
+        fig.suptitle(img_path.name)
+        plt.tight_layout()
+        file_name = srf_output_path / img_path.name
+        plt.savefig(file_name, dpi=400, bbox_inches='tight')
+        # plt.show()
