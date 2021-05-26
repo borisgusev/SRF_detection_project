@@ -6,9 +6,6 @@ from skimage import color, util, exposure, feature
 
 
 def find_candidate_srf_blobs(img):
-    # image preprocessing
-    img = color.rgba2rgb(img)
-    img = color.rgb2gray(img)
     # invert image as exposure.blob_log finds light blobs, whereas SRF is dark
     img = util.invert(img)
     # gamma exposure seems to increase sensitivity. another parameter to tinker with
