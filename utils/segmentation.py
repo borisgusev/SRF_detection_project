@@ -13,23 +13,23 @@ healthy, srf = get_file_paths.get_all_train_data()
 
 img = plt.imread(srf[0])
 img = image_preprocessing.preprocess(img)
-blur  = filters.gaussian(img, sigma = 15)
+blur = filters.gaussian(img, sigma=15)
 # edges = feature.canny(img, sigma = 5)
-
 
 mask = retina_mask.retinal_mask(img)
 
 # seg_img, cluster_labels = utls.segmentation(img)
-seg_labels = segmentation.slic(color.gray2rgb(blur), mask = mask, enforce_connectivity=False,
+seg_labels = segmentation.slic(color.gray2rgb(blur),
+                               mask=mask,
+                               enforce_connectivity=False,
                                n_segments=30,
                                compactness=2,
                                start_label=1)
 modified = color.label2rgb(seg_labels, img)
 
-
 plt.subplot(1, 3, 1)
 plt.imshow(img, cmap='gray')
-plt.subplot(1,3,2)
+plt.subplot(1, 3, 2)
 plt.imshow(mask, cmap='gray')
 plt.subplot(1, 3, 3)
 plt.imshow(modified, cmap='gray')

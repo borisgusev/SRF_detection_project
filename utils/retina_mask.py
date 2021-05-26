@@ -11,10 +11,11 @@ import image_edit_utils as utls
 
 def retinal_mask(img):
     mask = np.zeros_like(img)
-    blur = filters.gaussian(img, sigma = 10)
+    blur = filters.gaussian(img, sigma=10)
     mask[blur > 0.25] = 1
     mask = ndi.binary_fill_holes(mask)
     return mask
+
 
 if __name__ == '__main__':
     healthy, srf = get_file_paths.get_all_train_data()
@@ -33,4 +34,4 @@ if __name__ == '__main__':
     plt.subplot(1, 2, 2)
     plt.imshow(edges, cmap='gray')
 
-    plt.show() 
+    plt.show()

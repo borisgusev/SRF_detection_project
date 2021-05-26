@@ -8,6 +8,7 @@ import get_file_paths
 import retina_mask
 import image_preprocessing
 
+
 def find_candidate_srf_blobs(img):
     # invert image as exposure.blob_log finds light blobs, whereas SRF is dark
     img = util.invert(img)
@@ -65,7 +66,6 @@ if __name__ == '__main__':
     # output_path.mkdir(exist_ok=True)
     healthy, srf = get_file_paths.get_all_train_data()
 
-
     img = plt.imread(srf[0])
     img = image_preprocessing.preprocess(img)
     fig, axes = plot_before_after(img)
@@ -93,4 +93,4 @@ if __name__ == '__main__':
     #     plt.tight_layout()
     #     file_name = srf_output_path / img_path.name
     #     plt.savefig(file_name, dpi=400, bbox_inches='tight')
-        # plt.show()
+    # plt.show()
