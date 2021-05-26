@@ -50,6 +50,7 @@ def plot_before_after(img):
     ax[1].imshow(img, cmap='gray')
     ax[1].set_title('Candidate Blobs')
     blobs = find_candidate_srf_blobs(img)
+    blobs = filter_blob_candidates(img, blobs)
     plot_blobs(ax[1], blobs)
     ax[0].set_axis_off()
     ax[1].set_axis_off()
