@@ -38,4 +38,5 @@ def rm_white_frame(img):
 def preprocess(img):
     img = color.rgba2rgb(img)
     img = rm_white_frame(img)
+    img = color.rgb2gray(img)
     return img
