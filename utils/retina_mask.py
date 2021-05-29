@@ -20,8 +20,13 @@ def retinal_mask(img):
 
 
 def rpe_upper_edge(img):
-    mask = np.zeros_like(img)
+    # mask = retinal_mask(img)
+    # mask = filters.sobel_h(mask) < 0
+    # for col in range(mask.shape[1]):
+    #     indices = np.nonzero(mask[:, col])[0]
+    #     mask[indices[:-1], col] = 0
     # img = filters.sobel(img)
+    mask = np.zeros_like(img)
     sorted_indices = np.argsort(img, axis=None)
     # find the top x% brightest pixels
     top_percentile = 0.05
@@ -51,7 +56,7 @@ def rpe_upper_edge(img):
 
 if __name__ == '__main__':
     healthy, srf = get_file_paths.get_all_train_data()
-    img = plt.imread(srf[0])
+    img = plt.imread(srf[35])
     # for img in srf:
     # img = plt.imread(img)
     img = image_preprocessing.preprocess(img)
