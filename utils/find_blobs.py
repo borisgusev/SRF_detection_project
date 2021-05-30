@@ -2,12 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 # from scipy.ndimage import morphology
-from skimage import color, util, exposure, feature, morphology
+from skimage import color, util, exposure, feature, morphology, filters
 from tqdm import tqdm
+from scipy import ndimage as ndi
 
 import get_file_paths
 import retina_mask
 import image_preprocessing
+import segmentation
 
 
 def find_candidate_srf_blobs(img):
@@ -16,10 +18,11 @@ def find_candidate_srf_blobs(img):
     # gamma exposure seems to increase sensitivity. another parameter to tinker with
     img = exposure.adjust_gamma(img, gamma=2.5)
     blobs = feature.blob_log(img,
-                             min_sigma=2,
+                             min_sigma=1,
                              max_sigma=20,
                              num_sigma=20,
-                             threshold=0.15,
+                             threshold=0.12,
+                             overlap=1,
                              exclude_border=(65))
     # convert sigma vals in third to column to radii
     blobs[:, 2] = blobs[:, 2] * np.sqrt(2)
@@ -31,9 +34,19 @@ def filter_blob_candidates(img, blobs):
     # mask = morphology.binary_erosion(mask, selem=morphology.rectangle(25, 1))
     # y, x = blobs[:, 0].astype('int64'), blobs[:, 1].astype('int64')
     # blobs = blobs[np.where(mask[y, x])]
+    
+    # blurred = filters.gaussian(img, sigma = 1)
+    seg_img, labels = segmentation.segmentation(img, nclust=6)
+    sorted_labels = segmentation.sort_labels(seg_img, labels)
+    fluid = labels == sorted_labels[1]
+    # fluid = ndi.binary_fill_holes(fluid)
+    # fluid = np.logical_not(fluid)
+    ys, xs = blobs[:, 0].astype('int64'), blobs[:, 1].astype('int64')
+    blobs = blobs[np.nonzero(fluid[ys, xs])]
+
 
     rpe_edge = retina_mask.rpe_upper_edge(img)
-    thresh = 50
+    thresh = 15
     bool_mask = np.zeros(blobs.shape[0], dtype='bool')
     for i, blob in enumerate(blobs):
         y, x, r = blob.astype('int64')
@@ -76,11 +89,11 @@ if __name__ == '__main__':
     output_path.mkdir(exist_ok=True)
     healthy, srf = get_file_paths.get_all_train_data()
 
-    img = plt.imread(srf[3])
-    img = image_preprocessing.preprocess(img)
-    fig, axes = plot_before_after(img)
-    plt.tight_layout()
-    plt.show()
+    # img = plt.imread(srf[3])
+    # img = image_preprocessing.preprocess(img)
+    # fig, axes = plot_before_after(img)
+    # plt.tight_layout()
+    # plt.show()
 
     healthy_output_path = output_path / 'NoSRF'
     healthy_output_path.mkdir(exist_ok=True)

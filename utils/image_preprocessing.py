@@ -42,6 +42,7 @@ def preprocess(img):
     img = color.rgb2gray(img)
 
     img = restoration.denoise_nl_means(img)
+    # img = restoration.denoise_bilateral(img)
     # img = exposure.equalize_adapthist(img)
 
     return img
