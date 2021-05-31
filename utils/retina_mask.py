@@ -34,9 +34,11 @@ def rpe_upper_edge(img):
     Returns:
         2D Array: Binary Mask
     """
-    seg_img, labels = segmentation.segmentation(img, nclust=4)
-    sorted_labels = segmentation.sort_labels(seg_img, labels)
-    mask = labels == sorted_labels[-1]
+    # find brightest segment
+    nclust = 4
+    seg_img, labels = segmentation.segmentation(img, nclust=nclust)
+    mask = labels == nclust - 1
+    # find relevant edges of mask, and only keep bottom-most edge pixels
     mask = filters.sobel_h(mask) > 0
     for col in range(mask.shape[1]):
         indices = np.nonzero(mask[:, col])[0]
@@ -56,10 +58,13 @@ def rpe_upper_edge(img):
 
 
 if __name__ == '__main__':
-    healthy, srf = get_img_paths.get_all_train_data()
+    # Script to apply masking to image
+    healthy, srf = get_img_paths.train_data()
     img = plt.imread(srf[0])
     img = image_preprocessing.preprocess(img)
+    # Uncomment one of interest
     mask = rpe_upper_edge(img)
+    # mask = retinal_mask(img)
 
     plt.subplot(1, 2, 1)
     plt.imshow(img, cmap='gray')
