@@ -1,18 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
-# from scipy.ndimage import morphology
-from skimage import color, util, exposure, feature, morphology, filters
+from skimage import util, exposure, feature
 from tqdm import tqdm
-from scipy import ndimage as ndi
 
-import get_file_paths
+import get_img_paths
 import retina_mask
 import image_preprocessing
 import segmentation
 
 
-def find_candidate_srf_blobs(img):
+def find_dark_blobs(img):
+    """Uses Laplacian of Gaussians to identify round regions (blobs) that are darker that their surroundsings
+
+    These blobs are candidates for sub-retinal fluid which typically is seens as a dark 'blob' within the retina.
+
+    Args:
+        img (Image Array): grayscale image
+
+    Returns:
+        2D Array: Each row is y-coord, x-coord, radius
+    """
     # invert image as exposure.blob_log finds light blobs, whereas SRF is dark
     img = util.invert(img)
     # gamma exposure seems to increase sensitivity. another parameter to tinker with
@@ -29,55 +37,66 @@ def find_candidate_srf_blobs(img):
     return blobs
 
 
-def filter_blob_candidates(img, blobs):
-    # mask = retina_mask.retinal_mask(img)
-    # mask = morphology.binary_erosion(mask, selem=morphology.rectangle(25, 1))
-    # y, x = blobs[:, 0].astype('int64'), blobs[:, 1].astype('int64')
-    # blobs = blobs[np.where(mask[y, x])]
-    
-    # blurred = filters.gaussian(img, sigma = 1)
+def filter_blobs(img, blobs):
+    """Filters candidate blobs to eliminate non-SRF blobs
+
+    Args:
+        img (Image Array): grayscale image
+        blobs (2D Array): each row is y-coord, x-coord, radius
+
+    Returns:
+        2D Array: filtered blobs
+    """
+    # first filter: dark regions of retina
     seg_img, labels = segmentation.segmentation(img, nclust=6)
-    sorted_labels = segmentation.sort_labels(seg_img, labels)
-    fluid = labels == sorted_labels[1]
-    # fluid = ndi.binary_fill_holes(fluid)
-    # fluid = np.logical_not(fluid)
+    fluid = labels == 1
     ys, xs = blobs[:, 0].astype('int64'), blobs[:, 1].astype('int64')
     blobs = blobs[np.nonzero(fluid[ys, xs])]
-
-
+    # second filter: not too far above RPE layer
     rpe_edge = retina_mask.rpe_upper_edge(img)
     thresh = 15
     bool_mask = np.zeros(blobs.shape[0], dtype='bool')
     for i, blob in enumerate(blobs):
         y, x, r = blob.astype('int64')
-        if np.any(rpe_edge[y : y+r+thresh, x]):
+        if np.any(rpe_edge[y:y + r + thresh, x]):
             bool_mask[i] = True
     blobs = blobs[bool_mask]
     return blobs
 
 
 def plot_blobs(axes, blobs):
-    # plot each blob as circle at the coordinate with respective radius
+    """Utility function to plot blobs in-place on axes
+
+    Args:
+        axes: single set of matplotlib axes
+        blobs (2D Array): each row is y-coord, x-coord, radius
+    """
     for blob in blobs:
         y, x, r = blob
         c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
         axes.add_patch(c)
-    # return axes
 
 
-def plot_before_after(img):
-    # utility function to plot original and blobs side by side
-    fig, axes = plt.subplots(1, 3, sharex=True, sharey=True)
+def plot_blobbing_process(img):
+    fig, axes = plt.subplots(nrows=2, ncols=2)
     ax = axes.ravel()
+    list(map(lambda x: x.set_axis_off(), ax))
+
     ax[0].imshow(img, cmap='gray')
     ax[0].set_title('Original')
-    ax[2].imshow(img, cmap='gray')
-    ax[2].set_title('Candidate Blobs')
-    blobs = find_candidate_srf_blobs(img)
-    blobs = filter_blob_candidates(img, blobs)
-    plot_blobs(ax[2], blobs)
-    ax[0].set_axis_off()
-    ax[2].set_axis_off()
+
+    seg_img, labels = segmentation.segmentation(img, nclust=6)
+    ax[1].imshow(labels == 1, cmap='gray')
+    ax[1].set_title('Segment Mask')
+
+    ax[2].imshow(retina_mask.rpe_upper_edge(img), cmap='gray')
+    ax[2].set_title('Upper RPE-layer edge estimate')
+
+    ax[3].imshow(img, cmap='gray')
+    blobs = find_dark_blobs(img)
+    blobs = filter_blobs(img, blobs)
+    plot_blobs(ax[3], blobs)
+    ax[3].set_title('Blobs')  # change title?
     return fig, ax
 
 
@@ -87,7 +106,7 @@ if __name__ == '__main__':
 
     output_path = Path('blob_output')
     output_path.mkdir(exist_ok=True)
-    healthy, srf = get_file_paths.get_all_train_data()
+    healthy, srf = get_img_paths.train_data()
 
     # img = plt.imread(srf[3])
     # img = image_preprocessing.preprocess(img)
@@ -100,9 +119,7 @@ if __name__ == '__main__':
     for img_path in tqdm(healthy):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
-        fig, axes = plot_before_after(img)
-        axes[1].set_axis_off()
-        axes[1].imshow(retina_mask.rpe_upper_edge(img))
+        fig, axes = plot_blobbing_process(img)
         fig.suptitle(img_path.name)
         plt.tight_layout()
         file_name = healthy_output_path / img_path.name
@@ -115,9 +132,7 @@ if __name__ == '__main__':
     for img_path in tqdm(srf):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
-        fig, axes = plot_before_after(img)
-        axes[1].set_axis_off()
-        axes[1].imshow(retina_mask.rpe_upper_edge(img))
+        fig, axes = plot_blobbing_process(img)
         fig.suptitle(img_path.name)
         plt.tight_layout()
         file_name = srf_output_path / img_path.name
