@@ -83,7 +83,7 @@ def plot_blobbing_process(img):
     list(map(lambda x: x.set_axis_off(), ax))
 
     ax[0].imshow(img, cmap='gray')
-    ax[0].set_title('Original')
+    ax[0].set_title('Post-Denoise')
 
     seg_img, labels = segmentation.segmentation(img, nclust=6)
     ax[1].imshow(labels == 1, cmap='gray')

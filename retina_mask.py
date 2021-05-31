@@ -40,9 +40,18 @@ def rpe_upper_edge(img):
     mask = labels == nclust - 1
     # find relevant edges of mask, and only keep bottom-most edge pixels
     mask = filters.sobel_h(mask) > 0
-    for col in range(mask.shape[1]):
+    prev = -1
+    for col in range(0,mask.shape[1]):
         indices = np.nonzero(mask[:, col])[0]
-        mask[indices[:-1], col] = 0
+
+        if (len(indices)>0):
+            max_ind = indices[len(indices)-1]
+            if (np.abs(max_ind - prev) > 20 and prev != -1):
+                mask[indices, col] = 0
+            else:
+                prev = max_ind
+                mask[indices[:-1], col] = 0
+
     # fill in gaps
     ys, xs = np.nonzero(mask)
     sorted_indices = np.argsort(xs)
@@ -60,7 +69,7 @@ def rpe_upper_edge(img):
 if __name__ == '__main__':
     # Script to apply masking to image
     healthy, srf = get_img_paths.train_data()
-    img = plt.imread(srf[0])
+    img = plt.imread(srf[13])
     img = image_preprocessing.preprocess(img)
     # Uncomment one of interest
     mask = rpe_upper_edge(img)
