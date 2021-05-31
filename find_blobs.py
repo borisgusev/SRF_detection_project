@@ -29,7 +29,7 @@ def find_dark_blobs(img):
                              min_sigma=1,
                              max_sigma=20,
                              num_sigma=20,
-                             threshold=0.12,
+                             threshold=0.20,
                              overlap=1,
                              exclude_border=(65))
     # convert sigma vals in third to column to radii
@@ -54,7 +54,7 @@ def filter_blobs(img, blobs):
     blobs = blobs[np.nonzero(fluid[ys, xs])]
     # second filter: not too far above RPE layer
     rpe_edge = retina_mask.rpe_upper_edge(img)
-    thresh = 15
+    thresh = 5
     bool_mask = np.zeros(blobs.shape[0], dtype='bool')
     for i, blob in enumerate(blobs):
         y, x, r = blob.astype('int64')
