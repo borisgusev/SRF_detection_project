@@ -1,19 +1,23 @@
-from numpy.core.fromnumeric import argmax
-from scipy.ndimage.measurements import label
-from skimage import color, feature, filters, segmentation, morphology, measure
+from skimage import filters
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import ndimage as ndi
 import scipy.signal
 
 import image_preprocessing
-import get_file_paths
-import find_blobs
-import image_edit_utils as utls
+import get_img_paths
 import segmentation
 
 
 def retinal_mask(img):
+    """Generates a mask of the retina using thresholding
+
+    Args:
+        img (Image Array): Grayscale Image
+
+    Returns:
+        2D Array: Binary Mask
+    """
     mask = np.zeros_like(img)
     blur = filters.gaussian(img, sigma=10)
     mask[blur > 0.25] = 1
@@ -22,6 +26,14 @@ def retinal_mask(img):
 
 
 def rpe_upper_edge(img):
+    """Generates a mask for estimate of the upper edge of RPE layer
+
+    Args:
+        img (Image Array): Grayscale Image
+
+    Returns:
+        2D Array: Binary Mask
+    """
     seg_img, labels = segmentation.segmentation(img, nclust=4)
     sorted_labels = segmentation.sort_labels(seg_img, labels)
     mask = labels == sorted_labels[-1]
@@ -42,51 +54,11 @@ def rpe_upper_edge(img):
     mask[new_ys, new_xs] = 1
     return mask
 
-    # # mask = retinal_mask(img)
-    # # mask = filters.sobel_h(mask) < 0
-    # # for col in range(mask.shape[1]):
-    # #     indices = np.nonzero(mask[:, col])[0]
-    # #     mask[indices[:-1], col] = 0
-    # # img = filters.sobel(img)
-    # mask = np.zeros_like(img)
-    # sorted_indices = np.argsort(img, axis=None)
-    # # find the top x% brightest pixels
-    # top_percentile = 0.05
-    # top_number = int(sorted_indices.size * top_percentile)
-    # # convert flat array indices into shaped-array indices
-    # top_indices = sorted_indices[-top_number:]
-    # top_indices = np.unravel_index(top_indices, shape=img.shape)
-    # mask[top_indices] = 1
-    # # for each column, from the bottom, take the first pixel where tha mask changes from 1 to 0
-    # mask = filters.sobel_h(mask) > 0
-    # for col in range(mask.shape[1]):
-    #     indices = np.nonzero(mask[:, col])[0]
-    #     mask[indices[:-1], col] = 0
-    # # fill in gaps
-    # ys, xs = np.nonzero(mask)
-    # sorted_indices = np.argsort(xs)
-    # new_xs = np.arange(np.min(xs), np.max(xs) + 1)
-    # new_ys = np.interp(new_xs, xs[sorted_indices], ys[sorted_indices])
-    # # smooth curve
-    # new_ys = scipy.signal.medfilt(new_ys, kernel_size=31)
-    # new_ys = new_ys.astype('int64')
-    # # create new mask
-    # mask = np.zeros_like(img)
-    # mask[new_ys, new_xs] = 1
-    # return mask
-
 
 if __name__ == '__main__':
-    healthy, srf = get_file_paths.get_all_train_data()
+    healthy, srf = get_img_paths.get_all_train_data()
     img = plt.imread(srf[0])
-    # for img in srf:
-    # img = plt.imread(img)
     img = image_preprocessing.preprocess(img)
-
-    # img = morphology.opening(img)
-
-    # edges = get_retinal_mask(img)
-    # mask = retinal_mask(img)
     mask = rpe_upper_edge(img)
 
     plt.subplot(1, 2, 1)
