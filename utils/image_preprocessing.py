@@ -1,12 +1,16 @@
 import numpy as np
-from scipy.ndimage import morphology
-# import matplotlib.pyplot as plt
-from skimage import color, restoration, exposure, filters
+from skimage import color, restoration
 
 
 def rm_white_frame(img):
-    '''removes white frame around image'''
+    """Crops the image to remove outer white fram
 
+    Args:
+        img (RGB Image): 
+
+    Returns:
+        RGB Image: cropped image
+    """
     # create a negative (to invert the white frame into black, to fill with 0)
     img = 1 - img
 
@@ -37,15 +41,18 @@ def rm_white_frame(img):
 
 
 def preprocess(img):
+    """Applies preprocessing steps to images
+
+    Converts to grayscale, removes white frame, and applies nl means denoising
+
+    Args:
+        img (RGBA img): 
+
+    Returns:
+        Gray Image: processed gray image
+    """
     img = color.rgba2rgb(img)
     img = rm_white_frame(img)
     img = color.rgb2gray(img)
-
     img = restoration.denoise_nl_means(img)
-    # img = restoration.denoise_bilateral(img)
-    # img = exposure.equalize_adapthist(img)
-
-    img = filters.gaussian(img, sigma = 3)
-    img = filters.unsharp_mask(img, radius = 20, amount = 2)
-
     return img
