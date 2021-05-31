@@ -10,12 +10,12 @@ if __name__ == '__main__':
     output_filename = 'gusev_solis.csv'
     col_names = ['filename', 'labels']
     output = pd.DataFrame(columns = col_names)
-    test_imgs = get_img_paths.test_data()
+    test_imgs_paths = get_img_paths.test_data()
 
-    img_names = list(map(lambda x: x.name, test_imgs))
+    img_names = list(map(lambda x: x.name, test_imgs_paths))
 
     labels = []
-    for img_path in tqdm(test_imgs):
+    for img_path in tqdm(test_imgs_paths):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
 
