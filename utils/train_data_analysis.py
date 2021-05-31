@@ -2,17 +2,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-import get_file_paths, image_preprocessing, find_blobs
+import get_img_paths
+import image_preprocessing
+import find_blobs
 
 if __name__ == '__main__':
-    healthy, srf = get_file_paths.get_all_train_data()
+    '''Small script to count detected srf in each training data set
+    '''
+    healthy, srf = get_img_paths.train_data()
 
     no_srf_detected = 0
     for img_path in tqdm(healthy):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
-        blobs = find_blobs.find_candidate_srf_blobs(img)
-        blobs = find_blobs.filter_blob_candidates(img, blobs)
+        blobs = find_blobs.find_dark_blobs(img)
+        blobs = find_blobs.filter_blobs(img, blobs)
 
         if len(blobs) == 0:
             no_srf_detected += 1
@@ -24,8 +28,8 @@ if __name__ == '__main__':
     for img_path in tqdm(srf):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
-        blobs = find_blobs.find_candidate_srf_blobs(img)
-        blobs = find_blobs.filter_blob_candidates(img, blobs)
+        blobs = find_blobs.find_dark_blobs(img)
+        blobs = find_blobs.filter_blobs(img, blobs)
 
         if len(blobs) != 0:
             srf_detected += 1
