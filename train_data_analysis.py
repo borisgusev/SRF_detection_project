@@ -21,8 +21,9 @@ if __name__ == '__main__':
         if len(blobs) == 0:
             no_srf_detected += 1
 
-    print(f'Negative result for SRF was correctly returned for {no_srf_detected} out of {len(healthy)} healthy images')
-
+    print(
+        f'Negative result for SRF was correctly returned for {no_srf_detected} out of {len(healthy)} healthy images'
+    )
 
     srf_detected = 0
     for img_path in tqdm(srf):
@@ -34,7 +35,6 @@ if __name__ == '__main__':
         if len(blobs) != 0:
             srf_detected += 1
 
-    
-    print(f'Positive result for SRF was correctly returned for {srf_detected} out of {len(srf)} srf images')
-
-        
+    print(
+        f'Positive result for SRF was correctly returned for {srf_detected} out of {len(srf)} srf images'
+    )
