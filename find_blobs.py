@@ -7,7 +7,6 @@ from tqdm import tqdm
 import get_img_paths
 import retina_mask
 import image_preprocessing
-import segmentation
 
 
 def find_dark_blobs(img):
