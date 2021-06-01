@@ -1,17 +1,20 @@
 from pathlib import Path
 
 
-# def get_test_data (path_str='Test-Data'):
-#     """Returns a lists of test image paths
+def train_data(path_str='Train-Data'):
+    """Returns a lists of healthy and srf image paths from training data folder
 
-#     Args:
-#         path_str (str, optional): path to folder containing SRF and NoSRF folders with images. Defaults to 'Train-Data'.
+    Args:
+        path_str (str, optional): path to folder containing SRF and NoSRF folders with images. Defaults to 'Train-Data'.
 
-#     Returns:
-#         ([Path], [Path]): tuple of two lists; each list containing paths for images
-#     """
+    Returns:
+        ([Path], [Path]): tuple of two lists; each list containing paths for images
+    """
+    path = Path(path_str)
+    return _get_healthy_data(path), _get_srf_data(path)
 
-def get_test_data(path_str='Test-Data'):
+
+def test_data(path_str='Test-Data'):
     """Returns a list of test data images
 
     Args:
@@ -25,24 +28,13 @@ def get_test_data(path_str='Test-Data'):
     return img_paths
 
 
-def get_healthy_data():
-    # train_data_path = Path('Train-Data')
-    train_data_path = Path('Train-Data')
-    healthy_path = train_data_path / 'NoSRF'
-    # healthy_images = [file for file in healthy_path.iterdir()]
+def _get_healthy_data(path):
+    healthy_path = path / 'NoSRF'
     healthy_images = list(healthy_path.glob('*.png'))
     return healthy_images
 
 
-def get_srf_data():
-    # train_data_path = Path('Train-Data')
-    train_data_path = Path('Train-Data')
-    srf_path = train_data_path / 'SRF'
-    # srf_images = [file for file in srf_path.iterdir()]
+def _get_srf_data(path):
+    srf_path = path / 'SRF'
     srf_images = list(srf_path.glob('*.png'))
     return srf_images
-
-
-# only training data
-def train_data():
-    return get_healthy_data(), get_srf_data()

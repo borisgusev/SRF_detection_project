@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
     output_path = Path('blob_output')
     output_path.mkdir(exist_ok=True)
-    test_img = get_img_paths.get_test_data()
+    test_img = get_img_paths.test_data()
 
     output_path = output_path / 'Test'
     output_path.mkdir(exist_ok=True)
