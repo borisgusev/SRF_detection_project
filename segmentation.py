@@ -1,4 +1,4 @@
-from skimage import color 
+from skimage import color
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import cluster
@@ -7,6 +7,7 @@ from pathlib import Path
 
 import image_preprocessing
 import get_img_paths
+
 
 def segmentation(gray_image, nclust=3):
     """Applies K-Means segmentation to gray image, returning segmented image and labels matrix
@@ -23,7 +24,7 @@ def segmentation(gray_image, nclust=3):
     image = color.gray2rgb(gray_image)
 
     x, y, z = image.shape
-    image_2d = image.reshape(x*y, z)
+    image_2d = image.reshape(x * y, z)
     image_2d.shape
 
     kmeans_cluster = cluster.KMeans(n_clusters=nclust)
@@ -41,6 +42,7 @@ def segmentation(gray_image, nclust=3):
     cluster_labels_matrix = new_labels_matrix
     return segmented_img, cluster_labels_matrix
 
+
 def _sort_labels(segmented_image, lables):
     """Returns a list of labels in the order of brightness
 
@@ -52,10 +54,11 @@ def _sort_labels(segmented_image, lables):
         [int]: List of labels in the order of brightness
     """
     label_brightness = []
-    for lable in range(np.max(lables)+1):
+    for lable in range(np.max(lables) + 1):
         label_brightness.append(np.max(segmented_image[lables == lable]))
     sorted_labels = np.argsort(label_brightness)
     return sorted_labels
+
 
 if __name__ == '__main__':
     # Script to run segmentation on all training images
@@ -70,7 +73,7 @@ if __name__ == '__main__':
     for img_path in tqdm(healthy):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
-        seg_img, cluster_labels = segmentation(img, nclust = nclust)
+        seg_img, cluster_labels = segmentation(img, nclust=nclust)
         # Uncomment one below if want segmented image or particular segment
         # modified = seg_img
         modified = cluster_labels == 1
@@ -90,7 +93,7 @@ if __name__ == '__main__':
     for img_path in tqdm(srf):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
-        seg_img, cluster_labels = segmentation(img, nclust = nclust)
+        seg_img, cluster_labels = segmentation(img, nclust=nclust)
         # Uncomment one below if want segmented image or particular segment
         # modified = seg_img
         modified = cluster_labels == 1
