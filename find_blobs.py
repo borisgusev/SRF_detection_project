@@ -13,7 +13,7 @@ import segmentation
 def find_dark_blobs(img):
     """Uses Laplacian of Gaussians to identify round regions (blobs) that are darker that their surroundsings
 
-    These blobs are candidates for sub-retinal fluid which typically is seens as a dark 'blob' within the retina.
+    These blobs are candidates for sub-retinal fluid which typically appears as dark 'blobs' within the retina.
 
     Args:
         img (Image Array): grayscale image
@@ -23,7 +23,7 @@ def find_dark_blobs(img):
     """
     # invert image as exposure.blob_log finds light blobs, whereas SRF is dark
     img = util.invert(img)
-    # gamma exposure seems to increase sensitivity. another parameter to tinker with
+    # gamma exposure seems to increase sensitivity
     img = exposure.adjust_gamma(img, gamma=2.5)
     blobs = feature.blob_log(img,
                              min_sigma=2,
@@ -54,6 +54,7 @@ def filter_blobs(img, blobs):
     bool_mask = np.zeros(blobs.shape[0], dtype='bool')
     for i, blob in enumerate(blobs):
         y, x, r = blob.astype('int64')
+        # if edge within y : y + r + thresh vertical interval
         if np.any(rpe_edge[y:y + r + thresh, x]):
             bool_mask[i] = True
     blobs = blobs[bool_mask]
@@ -74,6 +75,16 @@ def plot_blobs(axes, blobs):
 
 
 def plot_blobbing_process(img):
+    """Function to perform and plot the blobbing process
+
+    Plots three images: all detected blobs; edge used for proximity filtering; the remaining blobs after filtering
+
+    Args:
+        img (Image Array): Gray, preprocessed retinal image
+
+    Returns:
+        (fig, axes): tuple of matplotlib figure and axes
+    """    
     fig, axes = plt.subplots(nrows=1, ncols=3)
     ax = axes.ravel()
     list(map(lambda x: x.set_axis_off(), ax))
@@ -95,15 +106,14 @@ def plot_blobbing_process(img):
 
 
 if __name__ == '__main__':
-    # Takes a little while to run, generates folders
-    # with figures for each healthy and srf image
+    # Takes a little while to run, generates folders 
+    # with figures of blobs pre and post-filtering
 
     output_path = Path('blob_output')
-    output_path.mkdir(exist_ok=True)
-    test_img = get_img_paths.test_data()
-
     output_path = output_path / 'Test'
     output_path.mkdir(exist_ok=True)
+
+    test_img = get_img_paths.test_data()
     for img_path in tqdm(test_img):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
