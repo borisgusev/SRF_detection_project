@@ -83,7 +83,7 @@ def plot_blobbing_process(img):
 
     Returns:
         (fig, axes): tuple of matplotlib figure and axes
-    """    
+    """
     fig, axes = plt.subplots(nrows=1, ncols=3)
     ax = axes.ravel()
     list(map(lambda x: x.set_axis_off(), ax))
@@ -105,7 +105,7 @@ def plot_blobbing_process(img):
 
 
 if __name__ == '__main__':
-    # Takes a little while to run, generates folders 
+    # Takes a little while to run, generates folders
     # with figures of blobs pre and post-filtering
 
     output_path = Path('blob_output')
@@ -123,4 +123,3 @@ if __name__ == '__main__':
         plt.savefig(file_name, dpi=400, bbox_inches='tight')
         # plt.show()
         plt.close()
-
