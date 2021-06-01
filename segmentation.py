@@ -101,6 +101,6 @@ if __name__ == '__main__':
         plt.imshow(modified, cmap='gray')
         plt.suptitle(img_path.name)
         plt.tight_layout()
-        file_name = healthy_output_path / img_path.name
+        file_name = srf_output_path / img_path.name
         plt.savefig(file_name, dpi=400, bbox_inches='tight')
         plt.close()
