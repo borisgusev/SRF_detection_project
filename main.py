@@ -10,7 +10,7 @@ if __name__ == '__main__':
     output_filename = 'gusev_solis.csv'
     col_names = ['filename', 'labels']
     output = pd.DataFrame(columns = col_names)
-    test_imgs_paths = get_img_paths.test_data()
+    test_imgs_paths = get_img_paths.get_test_data()
 
     img_names = list(map(lambda x: x.name, test_imgs_paths))
 

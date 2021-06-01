@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import ndimage as ndi
 import scipy.signal
+from tqdm import tqdm
 
 import image_preprocessing
 import get_img_paths
 import segmentation
+from pathlib import Path
 
 
 def retinal_mask(img):
@@ -37,9 +39,12 @@ def rpe_upper_edge(img):
     # find brightest segment
     nclust = 4
     seg_img, labels = segmentation.segmentation(img, nclust=nclust)
+
     mask = labels == nclust - 1
     # find relevant edges of mask, and only keep bottom-most edge pixels
+
     mask = filters.sobel_h(mask) > 0
+
     prev = -1
     for col in range(0,mask.shape[1]):
         indices = np.nonzero(mask[:, col])[0]
@@ -68,16 +73,45 @@ def rpe_upper_edge(img):
 
 if __name__ == '__main__':
     # Script to apply masking to image
-    healthy, srf = get_img_paths.train_data()
-    img = plt.imread(srf[13])
-    img = image_preprocessing.preprocess(img)
-    # Uncomment one of interest
-    mask = rpe_upper_edge(img)
-    # mask = retinal_mask(img)
 
-    plt.subplot(1, 2, 1)
-    plt.imshow(img, cmap='gray')
-    plt.subplot(1, 2, 2)
-    plt.imshow(mask, cmap='gray')
+    output_path1 = Path('out_img_processing')
+    output_path1.mkdir(exist_ok=True)
 
-    plt.show()
+    output_path2 = Path('out_retina_mask')
+    output_path2.mkdir(exist_ok=True)
+
+    test_img = get_img_paths.get_test_data()
+
+    for img_name in tqdm(test_img):
+
+        img = plt.imread(img_name)
+
+        plt.subplot(1, 2, 1)
+        plt.title ("Original", fontsize=10)
+        plt.imshow(img, cmap='gray')
+        plt.axis("off")
+
+        img = image_preprocessing.preprocess(img)
+
+        plt.subplot(1, 2, 2)
+        plt.title ("Filtered", fontsize=10)
+        plt.imshow(img, cmap='gray')
+        plt.axis("off")
+
+        test_img = get_img_paths.get_test_data()
+        file_name = output_path1 / img_name.name
+        plt.savefig(file_name, dpi=400, bbox_inches='tight')
+        # plt.show()
+        plt.close()
+
+        # Uncomment one of interest
+        mask = rpe_upper_edge(img)
+        # mask = retinal_mask(img)
+
+
+        file_name = output_path2 / img_name.name
+        plt.savefig(file_name, dpi=400, bbox_inches='tight')
+        # plt.show()
+        plt.close()
+
+

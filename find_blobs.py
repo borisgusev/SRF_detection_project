@@ -26,10 +26,10 @@ def find_dark_blobs(img):
     # gamma exposure seems to increase sensitivity. another parameter to tinker with
     img = exposure.adjust_gamma(img, gamma=2.5)
     blobs = feature.blob_log(img,
-                             min_sigma=1,
+                             min_sigma=2,
                              max_sigma=20,
                              num_sigma=20,
-                             threshold=0.20,
+                             threshold=0.15,
                              overlap=1,
                              exclude_border=(65))
     # convert sigma vals in third to column to radii
@@ -47,14 +47,10 @@ def filter_blobs(img, blobs):
     Returns:
         2D Array: filtered blobs
     """
-    # first filter: dark regions of retina
-    seg_img, labels = segmentation.segmentation(img, nclust=6)
-    fluid = labels == 1
-    ys, xs = blobs[:, 0].astype('int64'), blobs[:, 1].astype('int64')
-    blobs = blobs[np.nonzero(fluid[ys, xs])]
-    # second filter: not too far above RPE layer
+
+    # Filter: not too far above RPE layer
     rpe_edge = retina_mask.rpe_upper_edge(img)
-    thresh = 5
+    thresh = 20
     bool_mask = np.zeros(blobs.shape[0], dtype='bool')
     for i, blob in enumerate(blobs):
         y, x, r = blob.astype('int64')
@@ -78,25 +74,23 @@ def plot_blobs(axes, blobs):
 
 
 def plot_blobbing_process(img):
-    fig, axes = plt.subplots(nrows=2, ncols=2)
+    fig, axes = plt.subplots(nrows=1, ncols=3)
     ax = axes.ravel()
     list(map(lambda x: x.set_axis_off(), ax))
 
     ax[0].imshow(img, cmap='gray')
-    ax[0].set_title('Post-Denoise')
-
-    seg_img, labels = segmentation.segmentation(img, nclust=6)
-    ax[1].imshow(labels == 1, cmap='gray')
-    ax[1].set_title('Segment Mask')
-
-    ax[2].imshow(retina_mask.rpe_upper_edge(img), cmap='gray')
-    ax[2].set_title('Upper RPE-layer edge estimate')
-
-    ax[3].imshow(img, cmap='gray')
+    ax[0].set_title('All detected blobs', fontsize=10)
     blobs = find_dark_blobs(img)
+    plot_blobs(ax[0], blobs)
+
+    ax[1].imshow(retina_mask.rpe_upper_edge(img), cmap='gray')
+    ax[1].set_title('PR-layer edge detection', fontsize=10)
+
+    ax[2].imshow(img, cmap='gray')
+
     blobs = filter_blobs(img, blobs)
-    plot_blobs(ax[3], blobs)
-    ax[3].set_title('Blobs')  # change title?
+    plot_blobs(ax[2], blobs)
+    ax[2].set_title('Filtered blobs', fontsize=10)  # change title?
     return fig, ax
 
 
@@ -106,36 +100,18 @@ if __name__ == '__main__':
 
     output_path = Path('blob_output')
     output_path.mkdir(exist_ok=True)
-    healthy, srf = get_img_paths.train_data()
+    test_img = get_img_paths.get_test_data()
 
-    # img = plt.imread(srf[3])
-    # img = image_preprocessing.preprocess(img)
-    # fig, axes = plot_before_after(img)
-    # plt.tight_layout()
-    # plt.show()
-
-    healthy_output_path = output_path / 'NoSRF'
-    healthy_output_path.mkdir(exist_ok=True)
-    for img_path in tqdm(healthy):
+    output_path = output_path / 'Test'
+    output_path.mkdir(exist_ok=True)
+    for img_path in tqdm(test_img):
         img = plt.imread(img_path)
         img = image_preprocessing.preprocess(img)
         fig, axes = plot_blobbing_process(img)
         fig.suptitle(img_path.name)
         plt.tight_layout()
-        file_name = healthy_output_path / img_path.name
+        file_name = output_path / img_path.name
         plt.savefig(file_name, dpi=400, bbox_inches='tight')
         # plt.show()
         plt.close()
 
-    srf_output_path = output_path / 'SRF'
-    srf_output_path.mkdir(exist_ok=True)
-    for img_path in tqdm(srf):
-        img = plt.imread(img_path)
-        img = image_preprocessing.preprocess(img)
-        fig, axes = plot_blobbing_process(img)
-        fig.suptitle(img_path.name)
-        plt.tight_layout()
-        file_name = srf_output_path / img_path.name
-        plt.savefig(file_name, dpi=400, bbox_inches='tight')
-        # plt.show()
-        plt.close()
