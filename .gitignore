@@ -3,6 +3,7 @@ Train-Data/
 Test-Data/
 blob_output/
 segmentation_output/
+out_retina_mask/
 gusev_solis.csv
 
 .DS_Store
