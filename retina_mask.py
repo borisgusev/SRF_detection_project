@@ -11,7 +11,6 @@ import segmentation
 from pathlib import Path
 
 
-# not used anywhere
 def retinal_mask(img):
     """Generates a mask of the retina using thresholding
 
@@ -40,23 +39,21 @@ def rpe_upper_edge(img):
     # find brightest segment
     nclust = 4
     seg_img, labels = segmentation.segmentation(img, nclust=nclust)
-    mask = labels == nclust - 1
 
+    mask = labels == nclust - 1
     # find relevant edges of mask, and only keep bottom-most edge pixels
+
     mask = filters.sobel_h(mask) > 0
 
     prev = -1
-    for col in range(0, mask.shape[1]):
+    for col in range(0,mask.shape[1]):
         indices = np.nonzero(mask[:, col])[0]
 
-        if (len(indices) > 0):
-            max_ind = indices[len(indices) - 1]
-            # apply threshold of 20 pixels
+        if (len(indices)>0):
+            max_ind = indices[len(indices)-1]
             if (np.abs(max_ind - prev) > 20 and prev != -1):
-                # too far, set to 0
                 mask[indices, col] = 0
             else:
-                # set all but the bottom-most to 0
                 prev = max_ind
                 mask[indices[:-1], col] = 0
 
@@ -75,51 +72,43 @@ def rpe_upper_edge(img):
 
 
 if __name__ == '__main__':
-    # Script to apply masking to images
-    # mostly used to create images for presntation
+    # Script to apply masking to image
 
-    output_path1 = Path('out_img_processing')
-    output_path1.mkdir(exist_ok=True)
+    output_path = Path('out_retina_mask')
+    output_path.mkdir(exist_ok=True)
 
-    output_path2 = Path('out_retina_mask')
-    output_path2.mkdir(exist_ok=True)
-
-    test_img = get_img_paths.test_data()
+    test_img = get_img_paths.get_test_data()
 
     for img_name in tqdm(test_img):
 
+        # Original image
         img = plt.imread(img_name)
-
-        plt.subplot(1, 2, 1)
-        plt.title("Original", fontsize=10)
+        
+        plt.subplot(1, 3, 1)
+        plt.title ("Original", fontsize=10)
         plt.imshow(img, cmap='gray')
         plt.axis("off")
 
+        # Processed image
         img = image_preprocessing.preprocess(img)
 
-        plt.subplot(1, 2, 2)
-        plt.title("Filtered", fontsize=10)
+        plt.subplot(1, 3, 2)
+        plt.title ("Filtered", fontsize=10)
         plt.imshow(img, cmap='gray')
         plt.axis("off")
 
-        #########################
-        #########################
-        # Looks like mistakes in copy-paste
-        # test_img rewritten even though in process of being consumed by for loop
-        # second empty (since plt.close() above) plot saved to output_path2
-        #########################
-        #########################
-        test_img = get_img_paths.test_data()
-        file_name = output_path1 / img_name.name
-        plt.savefig(file_name, dpi=400, bbox_inches='tight')
-        # plt.show()
-        plt.close()
-
-        # Uncomment one of interest
+        # Mask. Uncomment one of interest.
         mask = rpe_upper_edge(img)
         # mask = retinal_mask(img)
+        
+        plt.subplot(1, 3, 3)
+        plt.title ("Mask", fontsize=10)
+        plt.imshow(mask, cmap='gray')
+        plt.axis("off")
 
-        file_name = output_path2 / img_name.name
+        file_name = output_path / img_name.name
         plt.savefig(file_name, dpi=400, bbox_inches='tight')
         # plt.show()
         plt.close()
+
+
