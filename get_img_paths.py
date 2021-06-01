@@ -25,21 +25,6 @@ def get_test_data(path_str='Test-Data'):
     return img_paths
 
 
-def get_test_data(path_str='Test-Data'):
-    """Returns a list of test data images
-
-    Args:
-        path_str (str, optional): path towards test data folder. Defaults to 'Test-Data'.
-
-    Returns:
-        [Path]: list of image paths
-    """
-    path = Path(path_str)
-    img_paths = list(path.glob('*png'))
-    return img_paths
-
-
-
 def get_healthy_data():
     # train_data_path = Path('Train-Data')
     train_data_path = Path('Train-Data')
