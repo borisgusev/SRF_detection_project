@@ -10,15 +10,15 @@ The general method:
 
 
 Script Descriptions:
-    main.py                     Main script to generate csv file of image names and corresponding labels for test-data set
+    main.py                     main script to generate csv file of image names and corresponding labels for test-data set
 
-    find_blobs.py               Functions related to finding dark areas and filtering them
+    find_blobs.py               functions related to finding dark areas and filtering them
 
-    get_img_paths.py            Script to fetch test and train data sets
+    get_img_paths.py            functions to fetch test and train data sets
 
     image_preprocessing.py      image preprocessing functions
 
-    retina_mask.py              functions to create binary masks
+    retina_mask.py              functions to create binary masks of certain features
 
     segmentation.py             functions related to K-means segmentation
 
